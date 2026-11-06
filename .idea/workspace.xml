@@ -5,13 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="040fd976-d079-4ab6-ab87-13dc17e3a55e" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.gradle/9.4.1/checksums/checksums.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/9.4.1/checksums/checksums.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/9.4.1/checksums/sha1-checksums.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/9.4.1/checksums/sha1-checksums.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/9.4.1/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/9.4.1/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assignment/week1/API.md" beforeDir="false" afterPath="$PROJECT_DIR$/assignment/week1/API.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assignment/week1/SWAGGER.md" beforeDir="false" afterPath="$PROJECT_DIR$/assignment/week1/SWAGGER.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assignment/week2/week2.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assignment/week3/week3.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assignment/week4/week4.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/gdg/hongik/mission/Product.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/gdg/hongik/mission/entity/Product.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/gdg/hongik/mission/ProductStore.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/gdg/hongik/mission/ProductStore.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/gdg/hongik/mission/controller/ProductAdminController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/gdg/hongik/mission/controller/ProductAdminController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/gdg/hongik/mission/controller/ProductUserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/gdg/hongik/mission/controller/ProductUserController.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -43,6 +45,13 @@
       </state>
     </system>
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
@@ -66,6 +75,7 @@
   "keyToString": {
     "Gradle.Build gdg-7th-be-mission.executor": "Run",
     "Gradle.gdg-7th-be-mission 빌드.executor": "Run",
+    "Gradle.소스 다운로드.executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RequestMappingsPanelOrder0": "0",
     "RequestMappingsPanelOrder1": "1",
@@ -125,6 +135,8 @@
       <workItem from="1793165199237" duration="5544000" />
       <workItem from="1793530869582" duration="15000" />
       <workItem from="1793530886085" duration="409000" />
+      <workItem from="1793591542559" duration="42000" />
+      <workItem from="1793970262491" duration="13592000" />
     </task>
     <servers />
   </component>

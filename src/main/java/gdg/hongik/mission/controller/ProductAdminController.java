@@ -1,7 +1,8 @@
 package gdg.hongik.mission.controller;
 
-import gdg.hongik.mission.Product;
+import gdg.hongik.mission.entity.Product;
 import gdg.hongik.mission.ProductStore;
+import gdg.hongik.mission.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -25,6 +26,7 @@ import java.net.URI;
 public class ProductAdminController {
 
     private final ProductStore productStore;
+    private final ProductService productService;
 
     @PostMapping
     @Operation(summary = "상품 등록", description = "상품 ID, 상품명, 가격, 초기 재고를 입력하여 상품을 등록합니다.")
@@ -33,12 +35,8 @@ public class ProductAdminController {
             @ApiResponse(responseCode = "400", description = "상품 입력값이 올바르지 않음"),
             @ApiResponse(responseCode = "409", description = "이미 존재하는 상품 ID")
     })
-    public ResponseEntity<Product> createProduct(@RequestBody CreateProductRequest request) {
-        validateProduct(request);
-        isDuplicatedProduct(request);
-
-        Product product = new Product(request.id(), request.name(), request.price(), request.stock());
-        productStore.getProducts().add(product);
+    public ResponseEntity<Product> createProduct(@RequestBody Product.CreateProductRequest request) {
+        Product product = productService.createProduct(request);
 
         return ResponseEntity.created(URI.create("/api/products/" + product.getId())).body(product);
     }
@@ -51,13 +49,11 @@ public class ProductAdminController {
             @ApiResponse(responseCode = "404", description = "상품을 찾을 수 없음")
     })
     public ResponseEntity<Product> addStock(@PathVariable Long productId,
-                                            @RequestBody QuantityRequest request) {
-        validateQuantity(request.quantity());
+                                            @RequestBody Product.QuantityRequest request) {
 
-        Product product = findProduct(productId);
-        product.addStock(request.quantity());
+        Product.ProductResponse response = productService.addStock(productId, request);
 
-        return ResponseEntity.ok(product);
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{productId}")
@@ -81,37 +77,10 @@ public class ProductAdminController {
                 .orElseThrow(() -> new RuntimeException("상품을 찾을 수 없습니다."));
     }
 
-    private void validateProduct(CreateProductRequest request) {
-        if (request.id() == null || request.id() <= 0) {
-            throw new RuntimeException("상품 ID는 1 이상이어야 합니다.");
-        }
-        if (request.name() == null || request.name().isBlank()) {
-            throw new RuntimeException("상품명은 비어 있을 수 없습니다.");
-        }
-        if (request.price() < 0 || request.stock() < 0) {
-            throw new RuntimeException("가격과 재고는 0 이상이어야 합니다.");
-        }
-    }
-
     private void validateQuantity(int quantity) {
         if (quantity <= 0) {
             throw new RuntimeException("수량은 1 이상이어야 합니다.");
         }
-    }
-
-    public void isDuplicatedProduct(CreateProductRequest createProductRequest){
-        if (productStore.getProducts().stream()
-                .anyMatch(product -> product.getId().equals(createProductRequest.id)))
-        throw new RuntimeException("중복된 아이디 입니다.");
-
-        if (productStore.getProducts().stream()
-                .anyMatch(product -> product.getName().equals(createProductRequest.name)))
-            throw new RuntimeException("중복된 이름 입니다.");
-    }
-    public record CreateProductRequest(Long id, String name, int price, int stock) {
-    }
-
-    public record QuantityRequest(int quantity) {
     }
 
 }
