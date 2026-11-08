@@ -1,7 +1,8 @@
 package gdg.hongik.mission.Controller;
 
-import gdg.hongik.mission.Product;
-import gdg.hongik.mission.ProductStore;
+import gdg.hongik.mission.Entity.Product;
+import gdg.hongik.mission.Repository.ProductRepository;
+import gdg.hongik.mission.Service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -25,6 +26,14 @@ import java.util.Map;
 )
 public class ProductAdminController {
 
+    private final ProductRepository productRepository;
+    private final ProductService productService;
+
+    public ProductAdminController(ProductRepository productRepository, ProductService productService) {
+        this.productRepository = productRepository;
+        this.productService = productService;
+    }
+
     @Operation(
             summary = "상품 등록",
             description = "상품명, 가격, 재고를 입력받아 새로운 상품을 등록합니다."
@@ -36,26 +45,10 @@ public class ProductAdminController {
     @PostMapping("/api/products")
     public ResponseEntity<Product> createProduct(@RequestBody Product product) {
 
-        if (product.getName() == null || product.getName().isBlank()) {
-            throw new RuntimeException("상품명을 입력해주세요.");
-        }
-
-        if (product.getPrice() < 0 || product.getStock() < 0) {
-            throw new RuntimeException("가격과 재고는 0 이상이어야 합니다.");
-        }
-
-        for (Product existingProduct : ProductStore.products) {
-            if (existingProduct.getName().equals(product.getName())) {
-                throw new RuntimeException("동일한 이름의 상품이 이미 존재합니다.");
-            }
-        }
-
-        product.setId(ProductStore.sequence++);
-        ProductStore.products.add(product);
-
+        Product newProduct = productService.createProduct(product);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(product);
+                .body(newProduct);
 
     }
 
@@ -69,29 +62,18 @@ public class ProductAdminController {
     )
     @PostMapping("/api/stock")
     public Map<String,Object> addStock(@RequestBody Map<String, Object> request){
+
         Long productId = ((Number) request.get("productId")).longValue();
         int quantity = ((Number) request.get("quantity")).intValue();
 
-        if (quantity <= 0) {
-            throw new RuntimeException("추가할 수량은 1 이상이어야 합니다.");
-        }
-        for (Product existingproduct : ProductStore.products) {
+        Map<String, Object> response = new HashMap<>();
 
-            if (existingproduct.getId().equals(productId)) {
+        Product product = productService.addStock(productId,quantity);
 
-                existingproduct.setStock(quantity + existingproduct.getStock());
+        response.put("name",product.getName());
+        response.put("stock",product.getStock() );
 
-                Map<String, Object> response = new HashMap<>();
-
-                response.put("name", existingproduct.getName());
-                response.put("stock", existingproduct.getStock());
-
-                return response;
-            }
-
-        }
-
-        throw new RuntimeException("상품을 찾을 수 없습니다.");
+        return response;
     }
 
 
@@ -108,35 +90,16 @@ public class ProductAdminController {
     public Map<String, Object> deleteProducts(@RequestBody Map<String, Object> request) {
 
         List<Map<String,Object>> items = (List<Map<String, Object>>) request.get("products");
-        List<Long> productIds = new ArrayList<>();
-
-        for (Map<String, Object> item : items) {
-            Long productId = ((Number) item.get("productId")).longValue();
-            boolean found = false;
-
-            for (Product product : ProductStore.products) {
-                if (product.getId().equals(productId)) {
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) {
-                throw new RuntimeException("존재하지 않는 상품입니다.");
-            }
-            productIds.add(productId);
-        }
-        ProductStore.products.removeIf(
-                product -> productIds.contains(product.getId()));
-
+        List<Product> products = productService.deleteProducts(items);
         List<Map<String, Object>> remainingProducts = new ArrayList<>();
 
-        for (Product product : ProductStore.products) {
-
+        for(Product product : products){
             Map<String, Object> remainingProduct = new HashMap<>();
             remainingProduct.put("name", product.getName());
             remainingProduct.put("stock", product.getStock());
             remainingProducts.add(remainingProduct);
         }
+
 
         Map<String, Object> response = new HashMap<>();
         response.put("products", remainingProducts);
