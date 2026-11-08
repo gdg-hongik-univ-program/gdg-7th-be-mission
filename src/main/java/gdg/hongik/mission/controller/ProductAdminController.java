@@ -1,8 +1,9 @@
 package gdg.hongik.mission.controller;
 
-import gdg.hongik.mission.Product;
+import gdg.hongik.mission.entity.Product;
 import gdg.hongik.mission.ProductStore;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -20,18 +21,21 @@ import java.net.URI;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/admin/products")
+@RequestMapping("/api/v1/admin/products")
 @Tag(name = "관리자 상품 관리", description = "상품 등록, 재고 추가 및 상품 삭제 API")
 public class ProductAdminController {
 
     private final ProductStore productStore;
 
     @PostMapping
-    @Operation(summary = "상품 등록", description = "상품 ID, 상품명, 가격, 초기 재고를 입력하여 상품을 등록합니다.")
+    @Operation(summary = "여러 상품 등록",
+            description = "여러 상품을 객체 배열로 등록합니다. 재고가 0 이하이거나 ID 또는 이름이 중복되면 "
+                    + "해당 상품은 건너뛰고, 등록에 성공한 상품 목록을 반환합니다.")
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "상품 등록 성공"),
-            @ApiResponse(responseCode = "400", description = "상품 입력값이 올바르지 않음"),
-            @ApiResponse(responseCode = "409", description = "이미 존재하는 상품 ID")
+            @ApiResponse(responseCode = "201", description = "한 항목 이상 등록 성공 (부분 성공 포함)"),
+            @ApiResponse(responseCode = "200", description = "모두 실패하면 빈 배열"),
+            @ApiResponse(responseCode = "401", description = "인증되지 않음"),
+            @ApiResponse(responseCode = "403", description = "관리자 권한 없음")
     })
     public ResponseEntity<Product> createProduct(@RequestBody CreateProductRequest request) {
         validateProduct(request);
@@ -43,14 +47,16 @@ public class ProductAdminController {
         return ResponseEntity.created(URI.create("/api/products/" + product.getId())).body(product);
     }
 
-    @PatchMapping("/{productId}/stock")
-    @Operation(summary = "상품 재고 추가", description = "상품 ID에 해당하는 상품의 재고를 입력한 수량만큼 추가합니다.")
+    @PatchMapping("/stock")
+    @Operation(summary = "여러 상품 재고 추가",
+            description = "상품 ID와 추가 수량을 객체 배열로 전달합니다. 수량은 1 이상이며, "
+                    + "실패한 상품은 건너뛰고 재고 추가에 성공한 상품 목록을 반환합니다.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "재고 추가 성공"),
-            @ApiResponse(responseCode = "400", description = "수량이 올바르지 않음"),
-            @ApiResponse(responseCode = "404", description = "상품을 찾을 수 없음")
+            @ApiResponse(responseCode = "200", description = "재고 추가 결과 (모두 실패하면 빈 배열)"),
+            @ApiResponse(responseCode = "401", description = "인증되지 않음"),
+            @ApiResponse(responseCode = "403", description = "관리자 권한 없음")
     })
-    public ResponseEntity<Product> addStock(@PathVariable Long productId,
+    public ResponseEntity<Product> addStock(@Parameter(hidden = true) @PathVariable Long productId,
                                             @RequestBody QuantityRequest request) {
         validateQuantity(request.quantity());
 
@@ -60,14 +66,16 @@ public class ProductAdminController {
         return ResponseEntity.ok(product);
     }
 
-    @DeleteMapping("/{productId}")
-    @Operation(summary = "상품 삭제", description = "상품 ID에 해당하는 상품을 삭제합니다.")
+    @DeleteMapping
+    @Operation(summary = "여러 상품 삭제",
+            description = "요청 본문의 productIds 배열로 여러 상품을 삭제합니다. "
+                    + "없는 상품은 건너뛰고 삭제에 성공한 상품 목록을 반환합니다.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "상품 삭제 성공"),
-            @ApiResponse(responseCode = "401", description = "삭제 권한이 없음"),
-            @ApiResponse(responseCode = "404", description = "상품을 찾을 수 없음")
+            @ApiResponse(responseCode = "200", description = "삭제 결과 (모두 실패하면 빈 배열)"),
+            @ApiResponse(responseCode = "401", description = "인증되지 않음"),
+            @ApiResponse(responseCode = "403", description = "관리자 권한 없음")
     })
-    public ResponseEntity<Product> deleteProduct(@PathVariable Long productId) {
+    public ResponseEntity<Product> deleteProduct(@Parameter(hidden = true) @PathVariable Long productId) {
         Product deletedProduct = findProduct(productId);
         productStore.getProducts().remove(deletedProduct);
 

@@ -1,5 +1,6 @@
 package gdg.hongik.mission;
 
+import gdg.hongik.mission.entity.Product;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

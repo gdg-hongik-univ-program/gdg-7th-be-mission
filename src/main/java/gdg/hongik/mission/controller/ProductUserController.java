@@ -1,8 +1,11 @@
 package gdg.hongik.mission.controller;
 
-import gdg.hongik.mission.Product;
+import gdg.hongik.mission.entity.Product;
 import gdg.hongik.mission.ProductStore;
+import gdg.hongik.mission.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,67 +21,41 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/products")
+@RequestMapping("/api/v1")
 @RequiredArgsConstructor
 @Tag(name = "소비자 상품", description = "소비자용 상품 조회 및 구매 API")
 public class ProductUserController {
 
-    private final ProductStore productStore;
+    private final ProductService productService;
 
-    @GetMapping
-    @Operation(summary = "특정 상품 조회", description = "상품의 ID, 상품명, 가격 및 재고를 조회합니다.")
-    @ApiResponse(responseCode = "200", description = "상품 조회 성공")
+    @GetMapping("/products")
+    @Operation(summary = "상품명으로 상품 조회",
+            description = "상품명으로 검색합니다. 검색 결과가 없으면 빈 배열을 반환합니다.",
+            parameters = @Parameter(name = "name", in = ParameterIn.QUERY, required = true,
+                    description = "검색할 상품명", example = "키보드"))
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "상품 조회 성공"),
-            @ApiResponse(responseCode = "404", description = "상품을 찾을 수 없음")
+            @ApiResponse(responseCode = "200", description = "검색 결과 배열 (결과가 없으면 빈 배열)"),
+            @ApiResponse(responseCode = "400", description = "검색어 누락 또는 빈 문자열")
     })
-    public ResponseEntity<Product> getProduct(String name) {
-        Product result =  productStore.getProducts().stream()
-                .filter(product -> product.getName().equals(name))
-                .findFirst().orElseThrow(()->new RuntimeException("상품을 찾을 수 없습니다."));
-        return ResponseEntity.ok(result);
-    }
+    public ResponseEntity<Product.GetProductResponse> getProduct(String name) {
 
-    @PostMapping("/{productId}/purchases")
-    @Operation(summary = "상품 구매", description = "상품 ID와 구매 수량을 이용하여 상품을 구매하고 재고를 차감합니다.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "상품 구매 성공"),
-            @ApiResponse(responseCode = "400", description = "구매 수량이 올바르지 않거나 재고가 부족함"),
-            @ApiResponse(responseCode = "404", description = "상품을 찾을 수 없음")
-    })
-    public ResponseEntity<PurchaseResponse> purchaseProduct(@PathVariable Long productId,
-                                                            @RequestBody PurchaseRequest request) {
-        if (request.quantity() <= 0) {
-            throw new RuntimeException("구매 수량은 1 이상이어야 합니다.");
-        }
+        Product.GetProductResponse response = productService.getProduct(name);
 
-        Product product = productStore.getProducts().stream()
-                .filter(savedProduct -> savedProduct.getId().equals(productId))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("상품을 찾을 수 없습니다."));
-
-        if (product.getStock() < request.quantity()) {
-            throw new RuntimeException("재고가 부족합니다.");
-        }
-        product.removeStock(request.quantity());
-
-        PurchaseResponse response = new PurchaseResponse(
-                product.getId(),
-                product.getName(),
-                request.quantity(),
-                product.getPrice() * request.quantity(),
-                product.getStock()
-        );
         return ResponseEntity.ok(response);
     }
 
-    public record PurchaseRequest(int quantity) {
-    }
+    @PostMapping("/orders")
+    @Operation(summary = "여러 상품 구매",
+            description = "상품 ID와 수량을 객체 배열로 전달합니다. 수량은 1 이상이며, "
+                    + "상품이 없거나 수량이 잘못되거나 재고가 부족하면 해당 상품은 건너뜁니다. 성공한 상품 목록과 합계를 반환합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "한 항목 이상 구매 성공 (부분 성공 포함)"),
+            @ApiResponse(responseCode = "200", description = "모두 실패하면 빈 items와 totalPrice 0")
+    })
+    public ResponseEntity<Product.CreateOrderResponse> orderProduct(@RequestBody List<Product.OrderRequest> requestList) {
 
-    public record PurchaseResponse(Long productId,
-                                   String productName,
-                                   int quantity,
-                                   int totalPrice,
-                                   int remainingStock) {
+        CreateOrderResponse response = productService.orderProduct(requestList);
+
+        return ResponseEntity.ok(response);
     }
 }
