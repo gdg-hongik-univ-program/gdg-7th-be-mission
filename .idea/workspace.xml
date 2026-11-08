@@ -6,12 +6,19 @@
   <component name="ChangeListManager">
     <list default="true" id="040fd976-d079-4ab6-ab87-13dc17e3a55e" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.gradle/9.4.1/checksums/checksums.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/9.4.1/checksums/checksums.lock" afterDir="false" />
+<<<<<<< HEAD
       <change beforePath="$PROJECT_DIR$/.gradle/9.4.1/checksums/md5-checksums.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/9.4.1/checksums/md5-checksums.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/9.4.1/checksums/sha1-checksums.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/9.4.1/checksums/sha1-checksums.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/assignment/week1/API.md" beforeDir="false" afterPath="$PROJECT_DIR$/assignment/week1/API.md" afterDir="false" />
+=======
+      <change beforePath="$PROJECT_DIR$/.gradle/9.4.1/checksums/sha1-checksums.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/9.4.1/checksums/sha1-checksums.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/9.4.1/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/9.4.1/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+>>>>>>> 09860731a42d36bf51fc05bc372199f0f9f16ccd
       <change beforePath="$PROJECT_DIR$/src/main/java/gdg/hongik/mission/Product.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/gdg/hongik/mission/entity/Product.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/gdg/hongik/mission/ProductStore.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/gdg/hongik/mission/ProductStore.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/gdg/hongik/mission/controller/ProductAdminController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/gdg/hongik/mission/controller/ProductAdminController.java" afterDir="false" />
@@ -47,6 +54,13 @@
       </state>
     </system>
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
@@ -66,6 +80,7 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
+<<<<<<< HEAD
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;Gradle.Build gdg-7th-be-mission.executor&quot;: &quot;Run&quot;,
@@ -95,6 +110,37 @@
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
     &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+=======
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Gradle.Build gdg-7th-be-mission.executor": "Run",
+    "Gradle.gdg-7th-be-mission 빌드.executor": "Run",
+    "Gradle.소스 다운로드.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.MCP Project settings loaded": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "Spring Boot.BackendApplication.executor": "Run",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "main",
+    "junie.onboarding.icon.badge.shown": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Study_Web/gdg/gdg-7th-be-mission/src/test/java/gdg/hongik/mission",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "to.speed.mode.migration.done": "true",
+    "vue.rearranger.settings.migration": "true"
+>>>>>>> 09860731a42d36bf51fc05bc372199f0f9f16ccd
   }
 }</component>
   <component name="RecentsManager">
@@ -130,8 +176,13 @@
       <workItem from="1793165199237" duration="5544000" />
       <workItem from="1793530869582" duration="15000" />
       <workItem from="1793530886085" duration="409000" />
+<<<<<<< HEAD
       <workItem from="1793772936831" duration="1961000" />
       <workItem from="1794051840129" duration="3941000" />
+=======
+      <workItem from="1793591542559" duration="42000" />
+      <workItem from="1793970262491" duration="13592000" />
+>>>>>>> 09860731a42d36bf51fc05bc372199f0f9f16ccd
     </task>
     <servers />
   </component>
