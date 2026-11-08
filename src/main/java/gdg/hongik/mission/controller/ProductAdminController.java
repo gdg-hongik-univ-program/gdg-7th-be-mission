@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,7 +28,6 @@ import java.net.URI;
 @Tag(name = "관리자 상품 관리", description = "상품 등록, 재고 추가 및 상품 삭제 API")
 public class ProductAdminController {
 
-    private final ProductStore productStore;
     private final ProductService productService;
 
     @PostMapping
@@ -39,10 +40,10 @@ public class ProductAdminController {
             @ApiResponse(responseCode = "401", description = "인증되지 않음"),
             @ApiResponse(responseCode = "403", description = "관리자 권한 없음")
     })
-    public ResponseEntity<Product> createProduct(@RequestBody Product.CreateProductRequest request) {
-        Product product = productService.createProduct(request);
+    public ResponseEntity<List<Product.CreateProductResponse>> createProduct(@RequestBody List<Product.CreateProductRequest> requests) {
+        List<Product.CreateProductResponse> responses = productService.createProduct(requests);
 
-        return ResponseEntity.created(URI.create("/api/products/" + product.getId())).body(product);
+        return ResponseEntity.status(HttpStatus.CREATED).body(responses);
     }
 
     @PatchMapping("/stock")
@@ -54,18 +55,11 @@ public class ProductAdminController {
             @ApiResponse(responseCode = "401", description = "인증되지 않음"),
             @ApiResponse(responseCode = "403", description = "관리자 권한 없음")
     })
-<<<<<<< HEAD
-    public ResponseEntity<Product> addStock(@Parameter(hidden = true) @PathVariable Long productId,
-                                            @RequestBody QuantityRequest request) {
-        validateQuantity(request.quantity());
-=======
-    public ResponseEntity<Product> addStock(@PathVariable Long productId,
-                                            @RequestBody Product.QuantityRequest request) {
->>>>>>> 09860731a42d36bf51fc05bc372199f0f9f16ccd
+    public ResponseEntity<List<Product.AddStockResponse>> addStock(@RequestBody List<Product.AddStockRequest> requests) {
 
-        Product.ProductResponse response = productService.addStock(productId, request);
+        List<Product.AddStockResponse> responses = productService.addStock(requests);
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(responses);
     }
 
     @DeleteMapping
@@ -77,24 +71,11 @@ public class ProductAdminController {
             @ApiResponse(responseCode = "401", description = "인증되지 않음"),
             @ApiResponse(responseCode = "403", description = "관리자 권한 없음")
     })
-    public ResponseEntity<Product> deleteProduct(@Parameter(hidden = true) @PathVariable Long productId) {
-        Product deletedProduct = findProduct(productId);
-        productStore.getProducts().remove(deletedProduct);
+    public ResponseEntity<List<Product.DeleteProductResponse>> deleteProduct(
+            @RequestBody List<Product.DeleteProductRequest> requests
+    ) {
+        List<Product.DeleteProductResponse> responses = productService.deleteProduct(requests);
 
-        return ResponseEntity.ok(deletedProduct);
+        return ResponseEntity.ok(responses);
     }
-
-    private Product findProduct(Long productId) {
-        return productStore.getProducts().stream()
-                .filter(product -> product.getId().equals(productId))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("상품을 찾을 수 없습니다."));
-    }
-
-    private void validateQuantity(int quantity) {
-        if (quantity <= 0) {
-            throw new RuntimeException("수량은 1 이상이어야 합니다.");
-        }
-    }
-
 }
