@@ -5,10 +5,27 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="040fd976-d079-4ab6-ab87-13dc17e3a55e" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/src/main/java/gdg/hongik/mission/Product.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/9.4.1/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/9.4.1/executionHistory/executionHistory.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/9.4.1/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/9.4.1/executionHistory/executionHistory.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/9.4.1/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/9.4.1/fileHashes/fileHashes.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/9.4.1/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/9.4.1/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/9.4.1/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/9.4.1/fileHashes/resourceHashesCache.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment/week2/week2.md" beforeDir="false" afterPath="$PROJECT_DIR$/assignment/week2/week2.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/gdg/hongik/mission/Controller/ProductAdminController.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/gdg/hongik/mission/Controller/ProductAdminController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/gdg/hongik/mission/Controller/ProductUserController.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/gdg/hongik/mission/Controller/ProductUserController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/gdg/hongik/mission/Product.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/gdg/hongik/mission/ProductStore.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/reports/problems/problems-report.html" beforeDir="false" afterPath="$PROJECT_DIR$/build/reports/problems/problems-report.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/tmp/compileJava/compileTransaction/stash-dir/ProductAdminController.class.uniqueId0" beforeDir="false" afterPath="$PROJECT_DIR$/build/tmp/compileJava/compileTransaction/stash-dir/ProductAdminController.class.uniqueId0" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/tmp/compileJava/compileTransaction/stash-dir/ProductUserController.class.uniqueId1" beforeDir="false" afterPath="$PROJECT_DIR$/build/tmp/compileJava/compileTransaction/stash-dir/ProductUserController.class.uniqueId1" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/tmp/compileJava/previous-compilation-data.bin" beforeDir="false" afterPath="$PROJECT_DIR$/build/tmp/compileJava/previous-compilation-data.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/gdg/hongik/mission/Controller/ProductAdminController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/gdg/hongik/mission/Controller/ProductAdminController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/gdg/hongik/mission/Controller/ProductUserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/gdg/hongik/mission/Controller/ProductUserController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/gdg/hongik/mission/Product.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/gdg/hongik/mission/Entity/Product.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/gdg/hongik/mission/ProductStore.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/gdg/hongik/mission/controller/ProductAdminController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/gdg/hongik/mission/controller/ProductAdminController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/gdg/hongik/mission/controller/ProductUserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/gdg/hongik/mission/controller/ProductUserController.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -23,17 +40,56 @@
       <ProjectState />
     </projectState>
   </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <projects_view>
+          <tree_state>
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="mission" type="f1a62948:ProjectNode" />
+              </path>
+            </expand>
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;wjdgns313131&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/wjdgns313131/gdg-7th-be-mission.git&quot;,
+    &quot;accountId&quot;: &quot;7ba11682-8c2d-4229-909b-97779476531e&quot;
+  }
+}</component>
+  <component name="HttpClientOnboardingState">{
+  &quot;isOnboardingCommentShown&quot;: true
+}</component>
   <component name="McpProjectServerCommands">
     <commands />
     <urls />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 6,
-  "fromUser": false
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 6,
+  &quot;fromUser&quot;: false
+}</component>
   <component name="ProjectId" id="3LJHLsrc7gFdzXuBu8CvYxuxrKb" />
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="1" id="Add" />
@@ -45,6 +101,7 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "Gradle.Build gdg-7th-be-mission.executor": "Run",
+    "Gradle.gdg-7th-be-mission 빌드.executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RequestMappingsPanelOrder0": "0",
     "RequestMappingsPanelOrder1": "1",
@@ -57,17 +114,29 @@
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "Spring Boot.BackendApplication.executor": "Run",
     "codeWithMe.voiceChat.enabledByDefault": "false",
-    "git-widget-placeholder": "week2",
+    "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/Users/jeon-yuha/Desktop/gdg-7th-be-mission",
+    "last_opened_file_path": "/Users/leejeonghun/gdg-7th-be-mission/assignment/week2",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "모듈",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/assignment/week2" />
+      <recent name="$PROJECT_DIR$/assignment/week1/image" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/assignment/week1/images" />
+    </key>
+  </component>
   <component name="RunManager">
     <configuration name="BackendApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <module name="mission.main" />
@@ -85,10 +154,28 @@
       <option name="presentableId" value="Default" />
       <updated>1793165198078</updated>
       <workItem from="1793165199237" duration="5544000" />
+      <workItem from="1793463036940" duration="1286000" />
+      <workItem from="1793497711020" duration="15452000" />
+      <workItem from="1793701592695" duration="5568000" />
+      <workItem from="1793889949575" duration="570000" />
+      <workItem from="1793932050061" duration="10154000" />
+      <workItem from="1794020119987" duration="269000" />
+      <workItem from="1794020392763" duration="2206000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
 </project>
