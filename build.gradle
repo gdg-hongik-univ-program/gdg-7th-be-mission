@@ -7,22 +7,24 @@ plugins {
 group = 'gdg.hongik'
 version = '0.0.1-SNAPSHOT'
 
+// 1) 기존 java { toolchain { ... } } 블록 교체
 java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(17)
-	}
+	sourceCompatibility = JavaVersion.VERSION_17
+	targetCompatibility = JavaVersion.VERSION_17
 }
 
 repositories {
 	mavenCentral()
 }
 
+// 2) dependencies 블록 안에 MySQL 드라이버 추가
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-h2console'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.h2database:h2'
+	runtimeOnly 'com.mysql:mysql-connector-j' // 추가
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa-test'
 	testCompileOnly 'org.projectlombok:lombok'
@@ -32,4 +34,18 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+jar {
+	enabled = false // plain.jar 생성 방지 설정 추가
+}
+
+// Railpack(Railway)의 기본 실행 명령어(*/build/libs/*jar) 경로 호환 설정
+tasks.named('bootJar') {
+	doLast {
+		copy {
+			from archiveFile
+			into layout.buildDirectory.dir("build/libs")
+		}
+	}
 }
