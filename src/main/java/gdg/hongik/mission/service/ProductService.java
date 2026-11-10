@@ -46,13 +46,12 @@ public class ProductService {
 
         // STEP 1: 사전 검증
         for (PurchaseItemRequest item : items) {
-            if (item.getQuantity() <= 0) {
+            if (item.quantity() <= 0) {
                 throw new RuntimeException("구매 수량은 1개 이상이어야 합니다.");
             }
-            Product product = productRepository.findById(item.getProductId())
-                    .orElseThrow(() -> new RuntimeException("요청한 상품(ID: " + item.getProductId() + ")이 존재하지 않습니다."));
-
-            if (product.getStockQuantity() < item.getQuantity()) {
+            Product product = productRepository.findById(item.productId())
+                    .orElseThrow(() -> new RuntimeException("요청한 상품(ID: " + item.productId() + ")이 존재하지 않습니다."));
+            if (product.getStockQuantity() < item.quantity()) {
                 throw new RuntimeException(product.getName() + " 상품의 재고가 부족합니다.");
             }
         }
@@ -62,17 +61,17 @@ public class ProductService {
         List<PurchasedProductResponse> purchasedItemResponses = new ArrayList<>();
 
         for (PurchaseItemRequest item : items) {
-            Product product = productRepository.findById(item.getProductId()).get();
+            Product product = productRepository.findById(item.productId()).get();
 
-            product.setStockQuantity(product.getStockQuantity() - item.getQuantity());
+            product.setStockQuantity(product.getStockQuantity() - item.quantity());
             productRepository.save(product);
 
-            int subtotal = product.getPrice() * item.getQuantity();
+            int subtotal = product.getPrice() * item.quantity();
             totalAmount += subtotal;
 
             purchasedItemResponses.add(new PurchasedProductResponse(
                     product.getName(),
-                    item.getQuantity(),
+                    item.quantity(),
                     subtotal));
         }
 
@@ -82,14 +81,14 @@ public class ProductService {
     // 2-1. 상품 등록
     @Transactional
     public ProductResponse registerProduct(ProductCreateRequest request) {
-        if (request.getPrice() < 0 || request.getStockQuantity() < 0) {
+        if (request.price() < 0 || request.stockQuantity() < 0) {
             throw new RuntimeException("가격과 재고는 0 이상이어야 합니다.");
         }
-        if (productRepository.existsByName(request.getName())) {
-            throw new RuntimeException("이미 존재하는 상품명입니다: " + request.getName());
+        if (productRepository.existsByName(request.name())) {
+            throw new RuntimeException("이미 존재하는 상품명입니다: " + request.name());
         }
 
-        Product newProduct = new Product(request.getName(), request.getPrice(), request.getStockQuantity());
+        Product newProduct = new Product(request.name(), request.price(), request.stockQuantity());
         productRepository.save(newProduct);
 
         return new ProductResponse(
@@ -102,13 +101,13 @@ public class ProductService {
     // 2-2. 재고 추가
     @Transactional
     public ProductResponse addStock(StockUpdateRequest request) {
-        if (request.getQuantityToAdd() <= 0) {
+        if (request.quantityToAdd() <= 0) {
             throw new RuntimeException("추가할 재고 수량은 1개 이상이어야 합니다.");
         }
-        Product product = productRepository.findById(request.getProductId())
-                .orElseThrow(() -> new RuntimeException("재고를 추가할 상품(ID: " + request.getProductId() + ")이 존재하지 않습니다."));
+        Product product = productRepository.findById(request.productId())
+                .orElseThrow(() -> new RuntimeException("재고를 추가할 상품(ID: " + request.productId() + ")이 존재하지 않습니다."));
 
-        product.setStockQuantity(product.getStockQuantity() + request.getQuantityToAdd());
+        product.setStockQuantity(product.getStockQuantity() + request.quantityToAdd());
         productRepository.save(product);
 
         return new ProductResponse(
@@ -121,7 +120,7 @@ public class ProductService {
     // 2-3. 상품 삭제
     @Transactional
     public List<ProductResponse> deleteProducts(ProductDeleteRequest request) {
-        List<Long> productIds = request.getProductIds();
+        List<Long> productIds = request.productIds();
         if (productIds == null || productIds.isEmpty()) {
             throw new RuntimeException("삭제할 상품 ID 목록이 비어있습니다.");
         }
