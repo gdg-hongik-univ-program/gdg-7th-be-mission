@@ -1,5 +1,7 @@
 package gdg.hongik.mission.Controller;
 
+import gdg.hongik.mission.DTO.ProductPruchaseResponse;
+import gdg.hongik.mission.DTO.ProductPurchase;
 import gdg.hongik.mission.Entity.Product;
 import gdg.hongik.mission.Service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -52,9 +54,9 @@ public class ProductUserController {
             description = "상품 구매 성공"
     )
     @PostMapping("/api/orders")
-    public ResponseEntity<Map<String, Object>> purchase (@RequestBody Map<String, Object> request) {
+    public ResponseEntity<ProductPruchaseResponse> purchase (@RequestBody List<ProductPurchase> purchaseList) {
 
-        Map<String, Object> response = productService.purchase(request);
+        ProductPruchaseResponse response = productService.purchase(purchaseList);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)

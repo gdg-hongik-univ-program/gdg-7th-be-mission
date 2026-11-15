@@ -1,5 +1,6 @@
 package gdg.hongik.mission.Controller;
 
+import gdg.hongik.mission.DTO.*;
 import gdg.hongik.mission.Entity.Product;
 import gdg.hongik.mission.Repository.ProductRepository;
 import gdg.hongik.mission.Service.ProductService;
@@ -43,9 +44,9 @@ public class ProductAdminController {
             description = "상품 등록 성공"
     )
     @PostMapping("/api/products")
-    public ResponseEntity<Product> createProduct(@RequestBody Product product) {
+    public ResponseEntity<Product> createProduct(@RequestBody ProductRequest request) {
 
-        Product newProduct = productService.createProduct(product);
+        Product newProduct = productService.createProduct(request);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(newProduct);
@@ -61,17 +62,13 @@ public class ProductAdminController {
             description = "재고 추가 성공"
     )
     @PostMapping("/api/stock")
-    public Map<String,Object> addStock(@RequestBody Map<String, Object> request){
+    public ProductAddStockResponse addStock(@RequestBody ProductAddStock item){
 
-        Long productId = ((Number) request.get("productId")).longValue();
-        int quantity = ((Number) request.get("quantity")).intValue();
-
-        Map<String, Object> response = new HashMap<>();
+        Long productId = item.id();
+        int quantity = item.quantity();;
 
         Product product = productService.addStock(productId,quantity);
-
-        response.put("name",product.getName());
-        response.put("stock",product.getStock() );
+        ProductAddStockResponse response = new ProductAddStockResponse(product.getName(),product.getStock());
 
         return response;
     }
@@ -87,22 +84,16 @@ public class ProductAdminController {
             description = "상품 삭제 성공"
     )
     @DeleteMapping("/api/products")
-    public Map<String, Object> deleteProducts(@RequestBody Map<String, Object> request) {
+    public ProductDeleteResponse deleteProducts(@RequestBody List<ProductDelete> items) {
 
-        List<Map<String,Object>> items = (List<Map<String, Object>>) request.get("products");
         List<Product> products = productService.deleteProducts(items);
-        List<Map<String, Object>> remainingProducts = new ArrayList<>();
+
+        ProductDeleteResponse response = new ProductDeleteResponse();
 
         for(Product product : products){
-            Map<String, Object> remainingProduct = new HashMap<>();
-            remainingProduct.put("name", product.getName());
-            remainingProduct.put("stock", product.getStock());
-            remainingProducts.add(remainingProduct);
+            RemainingProduct item = new RemainingProduct(product.getName(),product.getStock());
+            response.items().add(item);
         }
-
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("products", remainingProducts);
 
         return response;
     }

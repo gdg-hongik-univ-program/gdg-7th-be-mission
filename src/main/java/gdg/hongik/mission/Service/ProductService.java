@@ -1,6 +1,7 @@
 package gdg.hongik.mission.Service;
 
 
+import gdg.hongik.mission.DTO.*;
 import gdg.hongik.mission.Entity.Product;
 import gdg.hongik.mission.Repository.ProductRepository;
 import org.springframework.stereotype.Service;
@@ -28,9 +29,8 @@ public class ProductService {
     }
 
     @Transactional
-    public Map<String, Object> purchase(Map<String, Object> request) {
+    public ProductPruchaseResponse purchase(List<ProductPurchase> items) {
 
-        List<Map<String, Object>> items = (List<Map<String, Object>>) request.get("products");
 
         if (items == null || items.isEmpty()) {
             throw new IllegalArgumentException("구매할 상품이 없습니다.");
@@ -38,16 +38,15 @@ public class ProductService {
 
         long totalPrice = 0;
 
-        List<Map<String, Object>> purchasedProducts = new ArrayList<>();
+        ProductPruchaseResponse response = new ProductPruchaseResponse();
 
-        for (Map<String, Object> item : items) {
+        for (ProductPurchase item : items) {
 
-            Long productId = ((Number) item.get("productId")).longValue();
-            int quantity = ((Number) item.get("quantity")).intValue();
+            Long productId = item.id();
+            int quantity = item.quantity();
 
             if (quantity <= 0) {
                 throw new IllegalArgumentException("구매 수량은 1 이상이어야 합니다.");
-
             }
 
             // 상품 조회
@@ -73,40 +72,31 @@ public class ProductService {
 
             // 구매 상품 정보 생성
 
-            Map<String, Object> purchasedItem = new HashMap<>();
-            purchasedItem.put("name", product.getName());
-            purchasedItem.put("quantity", quantity);
-            purchasedItem.put("amount", amount);
-            purchasedProducts.add(purchasedItem);
+            PurchasedProduct purchasedProduct = new PurchasedProduct(product.getName(),quantity,amount);
+            response.products().add(purchasedProduct);
 
         }
-
-        // 응답 생성
-
-        Map<String, Object> response = new HashMap<>();
-
-        response.put("totalPrice", totalPrice);
-        response.put("products", purchasedProducts);
 
         return response;
 
     }
 
-    public Product createProduct(Product product){
+    public Product createProduct(ProductRequest request){
 
-        if (product.getName() == null || product.getName().isBlank()) {
+        if (request.name() == null || request.name().isBlank()) {
             throw new RuntimeException("상품명을 입력해주세요.");
         }
 
-        if (product.getPrice() < 0 || product.getStock() < 0) {
+        if (request.price() < 0 || request.stock() < 0) {
             throw new RuntimeException("가격과 재고는 0 이상이어야 합니다.");
         }
 
-        if(productRepository.existsByName(product.getName())){
+        if(productRepository.existsByName(request.name())){
             throw new RuntimeException("동일한 이름의 상품이 이미 존재합니다.");
         }
 
-        return productRepository.save(product);
+        Product saveProduct = new Product(request.name(),request.price(),request.stock());
+        return productRepository.save(saveProduct);
     }
 
     @Transactional
@@ -122,15 +112,13 @@ public class ProductService {
     }
 
     @Transactional
-    public List<Product> deleteProducts(List<Map<String,Object>> items){
+    public List<Product> deleteProducts(List<ProductDelete> items){
 
-        for(Map<String,Object> item : items){
+        for(ProductDelete item : items){
             
-            Long productId = ((Number) item.get("productId")).longValue();
-
+            Long productId = item.id();
             Product product = productRepository.findById(productId)
                     .orElseThrow(() -> new RuntimeException("존재하지 않는 상품입니다."));
-
             productRepository.delete(product);
         }
         return productRepository.findAll();
