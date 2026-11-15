@@ -2,8 +2,15 @@ package gdg.hongik.mission.dto;
 
 import java.util.List;
 
-public record PurchaseResponse(long totalAmount, List<PurchaseItemResponse> items) {
+public record PurchaseResponse(
+        long totalPrice,
+        List<PurchaseItemResponse> items
+) {
 
-    public record PurchaseItemResponse(String name, long quantity, long amount) {
+    public record PurchaseItemResponse(
+            String itemName,
+            int count,
+            long price
+    ) {
     }
 }

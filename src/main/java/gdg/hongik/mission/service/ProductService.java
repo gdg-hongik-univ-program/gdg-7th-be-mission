@@ -1,8 +1,7 @@
 package gdg.hongik.mission.service;
 
-import gdg.hongik.mission.dto.DeleteProductsResponse;
 import gdg.hongik.mission.dto.ProductRequest;
-import gdg.hongik.mission.dto.ProductStockResponse;
+import gdg.hongik.mission.dto.ProductResponse;
 import gdg.hongik.mission.dto.PurchaseRequest;
 import gdg.hongik.mission.dto.PurchaseResponse;
 import gdg.hongik.mission.entity.Product;
@@ -25,201 +24,120 @@ public class ProductService {
         this.repository = repository;
     }
 
-    // 전체 상품 조회
-    public List<Product> findAll() {
-        return repository.findAll();
+    public List<ProductResponse> findAllProducts() {
+        return repository.findAll().stream()
+                .map(ProductResponse::from)
+                .toList();
     }
 
-    // ID로 상품 조회
-    public Product findById(Long productId) {
-        if (productId == null) {
-            throw new IllegalArgumentException("상품 ID를 입력해주세요.");
-        }
-
-        return repository.findById(productId)
-                .orElseThrow(() ->
-                        new IllegalArgumentException(
-                                "상품을 찾을 수 없습니다."
-                        ));
+    public ProductResponse findProductByItemName(String itemName) {
+        return ProductResponse.from(findOneByItemName(itemName));
     }
 
-    // 이름으로 상품 하나 조회
-    public Product findOneByName(String name) {
-        if (name == null || name.isBlank()) {
-            throw new IllegalArgumentException("상품명을 입력해주세요.");
-        }
-
-        List<Product> products = repository.findByItemName(name);
-
-        if (products.isEmpty()) {
-            throw new IllegalArgumentException("상품을 찾을 수 없습니다.");
-        }
-
-        return products.get(0);
-    }
-
-    // 상품 등록
     @Transactional
-    public void createProduct(ProductRequest request) {
+    public ProductResponse createProduct(ProductRequest request) {
         if (request == null) {
             throw new IllegalArgumentException("상품 정보를 입력해주세요.");
         }
 
-        if (request.name() == null || request.name().isBlank()) {
+        String itemName = request.name();
+
+        if (itemName == null || itemName.isBlank()) {
             throw new IllegalArgumentException("상품명을 입력해주세요.");
         }
+
         if (request.category() == null) {
             throw new IllegalArgumentException("카테고리를 입력해주세요.");
         }
 
         if (request.price() <= 0 || request.stockQuantity() < 0) {
-            throw new IllegalArgumentException(
-                    "가격과 초기 재고를 확인해주세요."
-            );
+            throw new IllegalArgumentException("가격과 초기 재고를 확인해주세요.");
         }
 
-        if (!repository.findByItemName(request.name()).isEmpty()) {
+        if (!repository.findByItemName(itemName).isEmpty()) {
             throw new IllegalArgumentException("이미 존재하는 상품명입니다.");
         }
 
         Product product = new Product();
-
-        // ID는 @GeneratedValue에 따라 자동 생성
-        product.setItemName(request.name());
+        product.setItemName(itemName);
         product.setPrice(request.price());
         product.setQuantity(request.stockQuantity());
         product.setCategory(request.category());
-        repository.save(product);
+
+        return ProductResponse.from(repository.save(product));
     }
 
-    // 재고 추가
     @Transactional
-    public ProductStockResponse addStock(
-            Long productId,
-            Integer quantityToAdd
-    ) {
-        if (quantityToAdd == null || quantityToAdd <= 0) {
-            throw new IllegalArgumentException(
-                    "추가 수량은 1 이상이어야 합니다."
-            );
+    public ProductResponse addStock(String itemName, Integer quantity) {
+        if (quantity == null || quantity <= 0) {
+            throw new IllegalArgumentException("추가 수량은 1 이상이어야 합니다.");
         }
 
-        Product product = findById(productId);
+        Product product = findOneByItemName(itemName);
+        int updatedQuantity = Math.addExact(product.getQuantity(), quantity);
+        product.setQuantity(updatedQuantity);
 
-        int finalStock = Math.addExact(
-                product.getQuantity(),
-                quantityToAdd
-        );
-
-        product.setQuantity(finalStock);
-
-        return new ProductStockResponse(
-                product.getItemName(),
-                product.getQuantity()
-        );
+        return ProductResponse.from(product);
     }
 
-    // 여러 상품 구매
     @Transactional
-    public PurchaseResponse purchaseProducts(List<PurchaseRequest.PurchaseItemRequest> items) {
+    public PurchaseResponse purchaseProducts(List<PurchaseRequest> items) {
         if (items == null || items.isEmpty()) {
-            throw new IllegalArgumentException(
-                    "구매할 상품을 입력해주세요."
-            );
+            throw new IllegalArgumentException("구매할 상품을 입력해주세요.");
         }
 
-        List<Product> selectedProducts = new ArrayList<>();
-        List<Integer> quantities = new ArrayList<>();
+        Set<Long> selectedIds = new HashSet<>();
         List<PurchaseResponse.PurchaseItemResponse> purchasedItems = new ArrayList<>();
+        long totalPrice = 0L;
 
-        Set<Long> selectedProductIds = new HashSet<>();
-
-        long totalAmount = 0L;
-
-        // 모든 상품과 구매 수량을 먼저 검증
-        for (PurchaseRequest.PurchaseItemRequest item : items) {
-            if (item == null) {
-                throw new IllegalArgumentException(
-                        "구매 항목을 확인해주세요."
-                );
+        for (PurchaseRequest item : items) {
+            if (item == null || item.id() == null
+                    || item.count() == null || item.count() <= 0) {
+                throw new IllegalArgumentException("상품 ID와 구매 수량을 확인해주세요.");
             }
 
-            Long productId = item.productId();
-            Long quantity = item.quantity();
-
-            if (productId == null || quantity == null
-                    || quantity <= 0 || quantity > Integer.MAX_VALUE) {
-                throw new IllegalArgumentException(
-                        "상품 ID와 구매 수량을 확인해주세요."
-                );
+            if (!selectedIds.add(item.id())) {
+                throw new IllegalArgumentException("같은 상품은 하나의 항목으로 보내주세요.");
             }
 
-            if (!selectedProductIds.add(productId)) {
-                throw new IllegalArgumentException(
-                        "같은 상품은 하나의 항목으로 보내주세요."
-                );
-            }
+            Product product = repository.findById(item.id())
+                    .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
 
-            Product product = findById(productId);
+            int count = item.count();
 
-            if (product.getQuantity() < quantity) {
+            if (product.getQuantity() < count) {
                 throw new IllegalArgumentException("재고가 부족합니다.");
             }
 
-            long amount = (long) product.getPrice() * quantity;
+            long itemPrice = (long) product.getPrice() * count;
+            totalPrice = Math.addExact(totalPrice, itemPrice);
+            product.setQuantity(product.getQuantity() - count);
 
             purchasedItems.add(new PurchaseResponse.PurchaseItemResponse(
                     product.getItemName(),
-                    quantity,
-                    amount
+                    count,
+                    itemPrice
             ));
-            selectedProducts.add(product);
-            quantities.add(quantity.intValue());
-
-            totalAmount = Math.addExact(totalAmount, amount);
         }
 
-        // 모든 검증이 끝난 뒤 재고 차감
-        for (int i = 0; i < selectedProducts.size(); i++) {
-            Product product = selectedProducts.get(i);
-
-            product.setQuantity(
-                    product.getQuantity() - quantities.get(i)
-            );
-        }
-
-        return new PurchaseResponse(totalAmount, purchasedItems);
+        return new PurchaseResponse(totalPrice, purchasedItems);
     }
 
-    // 여러 상품 삭제
     @Transactional
-    public DeleteProductsResponse deleteProducts(List<Long> ids) {
-        if (ids == null || ids.isEmpty()) {
-            throw new IllegalArgumentException(
-                    "삭제할 상품 ID를 입력해주세요."
-            );
+    public List<ProductResponse> deleteProduct(String itemName) {
+        Product product = findOneByItemName(itemName);
+        repository.delete(product);
+
+        return findAllProducts();
+    }
+
+    private Product findOneByItemName(String itemName) {
+        if (itemName == null || itemName.isBlank()) {
+            throw new IllegalArgumentException("상품명을 입력해주세요.");
         }
 
-        // 중복 ID는 한 번만 처리
-        Set<Long> uniqueIds = new HashSet<>(ids);
-        List<Product> productsToDelete = new ArrayList<>();
-
-        // 삭제 전에 모든 상품의 존재 여부 확인
-        for (Long id : uniqueIds) {
-            productsToDelete.add(findById(id));
-        }
-
-        repository.deleteAll(productsToDelete);
-
-        List<ProductStockResponse> remainingProducts = new ArrayList<>();
-
-        for (Product product : repository.findAll()) {
-            remainingProducts.add(new ProductStockResponse(
-                    product.getItemName(),
-                    product.getQuantity()
-            ));
-        }
-
-        return new DeleteProductsResponse(remainingProducts);
+        return repository.findByItemName(itemName).stream()
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
     }
 }

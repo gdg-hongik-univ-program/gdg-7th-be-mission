@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface Repository extends JpaRepository<Product, Long> {
 
-    List<Product> findByItemName(String name);
+    List<Product> findByItemName(String itemName);
 }

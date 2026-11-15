@@ -12,6 +12,6 @@ public enum Category {
     COSMETICS("화장품"),
     FOOD("식품");
 
-    @JsonValue // 응답 시 CLOTHES → "의류", 요청 시 "의류" → CLOTHES 로 양방향 변환됩니다.
+    @JsonValue
     private final String label;
 }
