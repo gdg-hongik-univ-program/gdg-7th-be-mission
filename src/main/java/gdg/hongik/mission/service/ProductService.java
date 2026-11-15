@@ -4,6 +4,16 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import gdg.hongik.mission.dto.AddStockRequest;
+import gdg.hongik.mission.dto.AddStockResponse;
+import gdg.hongik.mission.dto.CreateOrderRequest;
+import gdg.hongik.mission.dto.CreateOrderResponse;
+import gdg.hongik.mission.dto.CreateProductRequest;
+import gdg.hongik.mission.dto.CreateProductResponse;
+import gdg.hongik.mission.dto.DeleteProductRequest;
+import gdg.hongik.mission.dto.DeleteProductResponse;
+import gdg.hongik.mission.dto.GetProductResponse;
+import gdg.hongik.mission.dto.OrderedItems;
 import gdg.hongik.mission.entity.Product;
 import gdg.hongik.mission.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +29,7 @@ public class ProductService {
     private final ProductRepository productRepository;
 
     //상품 조회
-    public Product.GetProductResponse getProduct(Long id, String name){
+    public GetProductResponse getProduct(Long id, String name){
 
         if ((id == null && name == null)
                 || (id != null && name != null)) {
@@ -52,19 +62,19 @@ public class ProductService {
                     ));
         }
 
-        return new Product.GetProductResponse(result.getId(), result.getName(), result.getPrice(), result.getStock());
+        return new GetProductResponse(result.getId(), result.getName(), result.getPrice(), result.getStock());
     }
 
     //상품 구매
     @Transactional
-    public Product.CreateOrderResponse orderProduct(List<Product.CreateOrderRequest> requests){
+    public CreateOrderResponse orderProduct(List<CreateOrderRequest> requests){
         //요청 검증
         validateRequests(requests);
 
         int totalPrice = 0;
-        List<Product.OrderedItems> items = new ArrayList<>();
+        List<OrderedItems> items = new ArrayList<>();
 
-        for(Product.CreateOrderRequest request : requests){
+        for(CreateOrderRequest request : requests){
            
             if (request.productId() == null) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "상품 ID는 비어있을 수 없습니다.");
@@ -79,7 +89,7 @@ public class ProductService {
             targetProduct.deductStock(request.quantity());
             //items 에 추가
             int targetPrice = request.quantity() * targetProduct.getPrice();
-            items.add(new Product.OrderedItems(
+            items.add(new OrderedItems(
                     targetProduct.getId(),
                     targetProduct.getName(),
                     request.quantity(),
@@ -90,13 +100,13 @@ public class ProductService {
             totalPrice += targetPrice;
         }
 
-        return new Product.CreateOrderResponse(items, totalPrice);
+        return new CreateOrderResponse(items, totalPrice);
     }
 
 
     //상품 생성
     @Transactional
-    public List<Product.CreateProductResponse> createProduct(List<Product.CreateProductRequest> requests){
+    public List<CreateProductResponse> createProduct(List<CreateProductRequest> requests){
 
         //요청 검증
         validateRequests(requests);
@@ -107,14 +117,14 @@ public class ProductService {
         isDuplicatedProduct(requests);
 
         //통과 후 생성
-        List<Product.CreateProductResponse> responses = new ArrayList<>();
+        List<CreateProductResponse> responses = new ArrayList<>();
 
-        for (Product.CreateProductRequest request : requests){
+        for (CreateProductRequest request : requests){
 
             Product product = new Product(request.name(), request.price(), request.stock());
             Product savedProduct = productRepository.save(product);
 
-            responses.add(new Product.CreateProductResponse(
+            responses.add(new CreateProductResponse(
                     savedProduct.getId(),
                     savedProduct.getName(),
                     savedProduct.getPrice(),
@@ -126,23 +136,23 @@ public class ProductService {
 
     //재고 관리
     @Transactional
-    public List<Product.AddStockResponse> addStock(List<Product.AddStockRequest> requests){
+    public List<AddStockResponse> addStock(List<AddStockRequest> requests){
         //요청 검증
         validateRequests(requests);
         //재고 수 검증
         validateAddedQuantity(requests);
 
         //재고 추가
-        List<Product.AddStockResponse> responses = new ArrayList<>();
+        List<AddStockResponse> responses = new ArrayList<>();
 
-        for(Product.AddStockRequest request : requests) {
+        for(AddStockRequest request : requests) {
 
             Product targetProduct = productRepository.findById(request.productId())
                     .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "상품을 찾을 수 없습니다."));
 
             targetProduct.addStock(request.quantity());
 
-            responses.add(new Product.AddStockResponse(
+            responses.add(new AddStockResponse(
                     targetProduct.getId(), targetProduct.getName(), targetProduct.getPrice(), targetProduct.getStock()
             ));
         }
@@ -152,20 +162,20 @@ public class ProductService {
 
     //상품 삭제
     @Transactional
-    public List<Product.DeleteProductResponse> deleteProduct(List<Product.DeleteProductRequest> requests){
+    public List<DeleteProductResponse> deleteProduct(List<DeleteProductRequest> requests){
 
         //요청 검증
         validateRequests(requests);
 
         //삭제 진행
-        List<Product.DeleteProductResponse> responses = new ArrayList<>();
+        List<DeleteProductResponse> responses = new ArrayList<>();
 
-        for(Product.DeleteProductRequest request : requests){
+        for(DeleteProductRequest request : requests){
             //검증
             Product targetProduct = productRepository.findById(request.id())
                     .orElseThrow(()-> new ResponseStatusException(HttpStatus.BAD_REQUEST, "존재하지 않는 상품입니다."));
 
-            responses.add(new Product.DeleteProductResponse(
+            responses.add(new DeleteProductResponse(
                     targetProduct.getId(),targetProduct.getName(),targetProduct.getPrice(),targetProduct.getStock()
             ));
 
@@ -174,8 +184,8 @@ public class ProductService {
         return responses;
     }
 
-    public void validateProduct(List<Product.CreateProductRequest> requests) {
-        for (Product.CreateProductRequest request : requests) {
+    public void validateProduct(List<CreateProductRequest> requests) {
+        for (CreateProductRequest request : requests) {
             {
                 if (request.name() == null || request.name().isBlank()) {
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "상품명은 비어 있을 수 없습니다.");
@@ -186,20 +196,20 @@ public class ProductService {
             }
         }
     }
-    public void isDuplicatedProduct(List<Product.CreateProductRequest> requests){
-        for (Product.CreateProductRequest request : requests){
+    public void isDuplicatedProduct(List<CreateProductRequest> requests){
+        for (CreateProductRequest request : requests){
             if (productRepository.existsByName(request.name()))
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "중복된 이름 입니다.");
         }
     }
-    private void validateAddedQuantity(List<Product.AddStockRequest> requests) {
-        for (Product.AddStockRequest request : requests){
+    private void validateAddedQuantity(List<AddStockRequest> requests) {
+        for (AddStockRequest request : requests){
             if (request.quantity() <= 0) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수량은 1 이상이어야 합니다.");
             }
         }
     }
-    private void validateOrderedQuantity(Product targetProduct, Product.CreateOrderRequest request) {
+    private void validateOrderedQuantity(Product targetProduct, CreateOrderRequest request) {
 
         if (request.quantity() <= 0) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수량은 1 이상이어야 합니다.");

@@ -1,7 +1,9 @@
 package gdg.hongik.mission.controller;
 
-import gdg.hongik.mission.entity.Product;
 import gdg.hongik.mission.ProductStore;
+import gdg.hongik.mission.dto.CreateOrderRequest;
+import gdg.hongik.mission.dto.CreateOrderResponse;
+import gdg.hongik.mission.dto.GetProductResponse;
 import gdg.hongik.mission.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -38,12 +40,12 @@ public class ProductUserController {
             @ApiResponse(responseCode = "400", description = "조회 조건 누락, 동시 입력 또는 잘못된 값"),
             @ApiResponse(responseCode = "404", description = "상품 없음")
     })
-    public ResponseEntity<Product.GetProductResponse> getProduct(
+    public ResponseEntity<GetProductResponse> getProduct(
             @RequestParam(required = false) Long id,
             @RequestParam(required = false) String name
     ) {
 
-        Product.GetProductResponse response = productService.getProduct(id, name);
+        GetProductResponse response = productService.getProduct(id, name);
 
         return ResponseEntity.ok(response);
     }
@@ -62,9 +64,9 @@ public class ProductUserController {
             @ApiResponse(responseCode = "404", description = "해당 상품 없음 (주문 전체 취소)"),
             @ApiResponse(responseCode = "409", description = "재고 부족 (주문 전체 취소)")
     })
-    public ResponseEntity<Product.CreateOrderResponse> orderProduct(@RequestBody List<Product.CreateOrderRequest> requests) {
+    public ResponseEntity<CreateOrderResponse> orderProduct(@RequestBody List<CreateOrderRequest> requests) {
 
-        Product.CreateOrderResponse response = productService.orderProduct(requests);
+        CreateOrderResponse response = productService.orderProduct(requests);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }

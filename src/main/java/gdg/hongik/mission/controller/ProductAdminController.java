@@ -1,7 +1,12 @@
 package gdg.hongik.mission.controller;
 
-import gdg.hongik.mission.entity.Product;
 import gdg.hongik.mission.ProductStore;
+import gdg.hongik.mission.dto.AddStockRequest;
+import gdg.hongik.mission.dto.AddStockResponse;
+import gdg.hongik.mission.dto.CreateProductRequest;
+import gdg.hongik.mission.dto.CreateProductResponse;
+import gdg.hongik.mission.dto.DeleteProductRequest;
+import gdg.hongik.mission.dto.DeleteProductResponse;
 import gdg.hongik.mission.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -40,8 +45,8 @@ public class ProductAdminController {
             @ApiResponse(responseCode = "401", description = "인증되지 않음"),
             @ApiResponse(responseCode = "403", description = "관리자 권한 없음")
     })
-    public ResponseEntity<List<Product.CreateProductResponse>> createProduct(@RequestBody List<Product.CreateProductRequest> requests) {
-        List<Product.CreateProductResponse> responses = productService.createProduct(requests);
+    public ResponseEntity<List<CreateProductResponse>> createProduct(@RequestBody List<CreateProductRequest> requests) {
+        List<CreateProductResponse> responses = productService.createProduct(requests);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responses);
     }
@@ -55,9 +60,9 @@ public class ProductAdminController {
             @ApiResponse(responseCode = "401", description = "인증되지 않음"),
             @ApiResponse(responseCode = "403", description = "관리자 권한 없음")
     })
-    public ResponseEntity<List<Product.AddStockResponse>> addStock(@RequestBody List<Product.AddStockRequest> requests) {
+    public ResponseEntity<List<AddStockResponse>> addStock(@RequestBody List<AddStockRequest> requests) {
 
-        List<Product.AddStockResponse> responses = productService.addStock(requests);
+        List<AddStockResponse> responses = productService.addStock(requests);
 
         return ResponseEntity.ok(responses);
     }
@@ -71,10 +76,10 @@ public class ProductAdminController {
             @ApiResponse(responseCode = "401", description = "인증되지 않음"),
             @ApiResponse(responseCode = "403", description = "관리자 권한 없음")
     })
-    public ResponseEntity<List<Product.DeleteProductResponse>> deleteProduct(
-            @RequestBody List<Product.DeleteProductRequest> requests
+    public ResponseEntity<List<DeleteProductResponse>> deleteProduct(
+            @RequestBody List<DeleteProductRequest> requests
     ) {
-        List<Product.DeleteProductResponse> responses = productService.deleteProduct(requests);
+        List<DeleteProductResponse> responses = productService.deleteProduct(requests);
 
         return ResponseEntity.ok(responses);
     }
