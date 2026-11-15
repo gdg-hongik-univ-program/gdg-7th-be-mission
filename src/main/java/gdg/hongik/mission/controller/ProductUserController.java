@@ -10,12 +10,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin(origins = "*")
 @RestController
 @Tag(
         name = "소비자 상품 API",
@@ -39,9 +36,9 @@ public class ProductUserController {
         Product product = productService.findOneByName(name);
         ProductResponse response = new ProductResponse(
                 product.getId(),
-                product.getName(),
+                product.getItemName(),
                 product.getPrice(),
-                product.getStockQuantity()
+                product.getQuantity()
         );
         return ResponseEntity.ok(response);
     }
