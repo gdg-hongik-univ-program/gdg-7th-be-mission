@@ -1,17 +1,22 @@
 package gdg.hongik.mission.service;
 
+import gdg.hongik.mission.dto.DeleteProductsResponse;
+import gdg.hongik.mission.dto.ProductRequest;
+import gdg.hongik.mission.dto.ProductStockResponse;
+import gdg.hongik.mission.dto.PurchaseRequest;
+import gdg.hongik.mission.dto.PurchaseResponse;
 import gdg.hongik.mission.entity.Product;
 import gdg.hongik.mission.entity.Repository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 @Service
+@Transactional(readOnly = true)
 public class ProductService {
 
     private final Repository repository;
@@ -54,37 +59,39 @@ public class ProductService {
     }
 
     // 상품 등록
-    public void createProduct(Product request) {
+    @Transactional
+    public void createProduct(ProductRequest request) {
         if (request == null) {
             throw new IllegalArgumentException("상품 정보를 입력해주세요.");
         }
 
-        if (request.getName() == null || request.getName().isBlank()) {
+        if (request.name() == null || request.name().isBlank()) {
             throw new IllegalArgumentException("상품명을 입력해주세요.");
         }
 
-        if (request.getPrice() <= 0 || request.getStockQuantity() < 0) {
+        if (request.price() <= 0 || request.stockQuantity() < 0) {
             throw new IllegalArgumentException(
                     "가격과 초기 재고를 확인해주세요."
             );
         }
 
-        if (!repository.findByName(request.getName()).isEmpty()) {
+        if (!repository.findByName(request.name()).isEmpty()) {
             throw new IllegalArgumentException("이미 존재하는 상품명입니다.");
         }
 
         Product product = new Product();
 
         // ID는 @GeneratedValue에 따라 자동 생성
-        product.setName(request.getName());
-        product.setPrice(request.getPrice());
-        product.setStockQuantity(request.getStockQuantity());
+        product.setName(request.name());
+        product.setPrice(request.price());
+        product.setStockQuantity(request.stockQuantity());
 
         repository.save(product);
     }
 
     // 재고 추가
-    public Map<String, Object> addStock(
+    @Transactional
+    public ProductStockResponse addStock(
             Long productId,
             Integer quantityToAdd
     ) {
@@ -103,19 +110,15 @@ public class ProductService {
 
         product.setStockQuantity(finalStock);
 
-        Product savedProduct = repository.save(product);
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("name", savedProduct.getName());
-        response.put("stockQuantity", savedProduct.getStockQuantity());
-
-        return response;
+        return new ProductStockResponse(
+                product.getName(),
+                product.getStockQuantity()
+        );
     }
 
     // 여러 상품 구매
-    public Map<String, Object> purchaseProducts(
-            List<Map<String, Long>> items
-    ) {
+    @Transactional
+    public PurchaseResponse purchaseProducts(List<PurchaseRequest.PurchaseItemRequest> items) {
         if (items == null || items.isEmpty()) {
             throw new IllegalArgumentException(
                     "구매할 상품을 입력해주세요."
@@ -124,22 +127,22 @@ public class ProductService {
 
         List<Product> selectedProducts = new ArrayList<>();
         List<Integer> quantities = new ArrayList<>();
-        List<Map<String, Object>> purchasedItems = new ArrayList<>();
+        List<PurchaseResponse.PurchaseItemResponse> purchasedItems = new ArrayList<>();
 
         Set<Long> selectedProductIds = new HashSet<>();
 
         long totalAmount = 0L;
 
         // 모든 상품과 구매 수량을 먼저 검증
-        for (Map<String, Long> item : items) {
+        for (PurchaseRequest.PurchaseItemRequest item : items) {
             if (item == null) {
                 throw new IllegalArgumentException(
                         "구매 항목을 확인해주세요."
                 );
             }
 
-            Long productId = item.get("productId");
-            Long quantity = item.get("quantity");
+            Long productId = item.productId();
+            Long quantity = item.quantity();
 
             if (productId == null || quantity == null
                     || quantity <= 0 || quantity > Integer.MAX_VALUE) {
@@ -162,12 +165,11 @@ public class ProductService {
 
             long amount = (long) product.getPrice() * quantity;
 
-            Map<String, Object> purchasedItem = new HashMap<>();
-            purchasedItem.put("name", product.getName());
-            purchasedItem.put("quantity", quantity);
-            purchasedItem.put("amount", amount);
-
-            purchasedItems.add(purchasedItem);
+            purchasedItems.add(new PurchaseResponse.PurchaseItemResponse(
+                    product.getName(),
+                    quantity,
+                    amount
+            ));
             selectedProducts.add(product);
             quantities.add(quantity.intValue());
 
@@ -183,17 +185,12 @@ public class ProductService {
             );
         }
 
-        repository.saveAll(selectedProducts);
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("totalAmount", totalAmount);
-        response.put("items", purchasedItems);
-
-        return response;
+        return new PurchaseResponse(totalAmount, purchasedItems);
     }
 
     // 여러 상품 삭제
-    public Map<String, Object> deleteProducts(List<Long> ids) {
+    @Transactional
+    public DeleteProductsResponse deleteProducts(List<Long> ids) {
         if (ids == null || ids.isEmpty()) {
             throw new IllegalArgumentException(
                     "삭제할 상품 ID를 입력해주세요."
@@ -211,20 +208,15 @@ public class ProductService {
 
         repository.deleteAll(productsToDelete);
 
-        List<Map<String, Object>> remainingProducts =
-                new ArrayList<>();
+        List<ProductStockResponse> remainingProducts = new ArrayList<>();
 
         for (Product product : repository.findAll()) {
-            Map<String, Object> item = new HashMap<>();
-            item.put("name", product.getName());
-            item.put("stockQuantity", product.getStockQuantity());
-
-            remainingProducts.add(item);
+            remainingProducts.add(new ProductStockResponse(
+                    product.getName(),
+                    product.getStockQuantity()
+            ));
         }
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("items", remainingProducts);
-
-        return response;
+        return new DeleteProductsResponse(remainingProducts);
     }
 }
