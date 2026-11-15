@@ -49,7 +49,7 @@ public class ProductService {
             throw new IllegalArgumentException("상품명을 입력해주세요.");
         }
 
-        List<Product> products = repository.findByName(name);
+        List<Product> products = repository.findByItemName(name);
 
         if (products.isEmpty()) {
             throw new IllegalArgumentException("상품을 찾을 수 없습니다.");
@@ -68,6 +68,9 @@ public class ProductService {
         if (request.name() == null || request.name().isBlank()) {
             throw new IllegalArgumentException("상품명을 입력해주세요.");
         }
+        if (request.category() == null) {
+            throw new IllegalArgumentException("카테고리를 입력해주세요.");
+        }
 
         if (request.price() <= 0 || request.stockQuantity() < 0) {
             throw new IllegalArgumentException(
@@ -75,17 +78,17 @@ public class ProductService {
             );
         }
 
-        if (!repository.findByName(request.name()).isEmpty()) {
+        if (!repository.findByItemName(request.name()).isEmpty()) {
             throw new IllegalArgumentException("이미 존재하는 상품명입니다.");
         }
 
         Product product = new Product();
 
         // ID는 @GeneratedValue에 따라 자동 생성
-        product.setName(request.name());
+        product.setItemName(request.name());
         product.setPrice(request.price());
-        product.setStockQuantity(request.stockQuantity());
-
+        product.setQuantity(request.stockQuantity());
+        product.setCategory(request.category());
         repository.save(product);
     }
 
@@ -104,15 +107,15 @@ public class ProductService {
         Product product = findById(productId);
 
         int finalStock = Math.addExact(
-                product.getStockQuantity(),
+                product.getQuantity(),
                 quantityToAdd
         );
 
-        product.setStockQuantity(finalStock);
+        product.setQuantity(finalStock);
 
         return new ProductStockResponse(
-                product.getName(),
-                product.getStockQuantity()
+                product.getItemName(),
+                product.getQuantity()
         );
     }
 
@@ -159,14 +162,14 @@ public class ProductService {
 
             Product product = findById(productId);
 
-            if (product.getStockQuantity() < quantity) {
+            if (product.getQuantity() < quantity) {
                 throw new IllegalArgumentException("재고가 부족합니다.");
             }
 
             long amount = (long) product.getPrice() * quantity;
 
             purchasedItems.add(new PurchaseResponse.PurchaseItemResponse(
-                    product.getName(),
+                    product.getItemName(),
                     quantity,
                     amount
             ));
@@ -180,8 +183,8 @@ public class ProductService {
         for (int i = 0; i < selectedProducts.size(); i++) {
             Product product = selectedProducts.get(i);
 
-            product.setStockQuantity(
-                    product.getStockQuantity() - quantities.get(i)
+            product.setQuantity(
+                    product.getQuantity() - quantities.get(i)
             );
         }
 
@@ -212,8 +215,8 @@ public class ProductService {
 
         for (Product product : repository.findAll()) {
             remainingProducts.add(new ProductStockResponse(
-                    product.getName(),
-                    product.getStockQuantity()
+                    product.getItemName(),
+                    product.getQuantity()
             ));
         }
 
