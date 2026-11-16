@@ -1,15 +1,30 @@
 소비자 (User)
 
+0. 전체 상품 조회
+- 조건 : 없음
+- GET, /api/v1/products
+- Request Body: 없음
+- 응답 : 전체 상품 객체
+```json
+[
+  { "id": 1, "itemName": "키보드", "price": 30000, "quantity": 10 },
+  { "id": 2, "itemName": "마우스", "price": 10000, "quantity": 10 }
+]
+```
+- 정상 응답 : 200(상품 조회 성공)
+- 상품이 없으면 빈 배열 반환
+- 상품이 없으면 빈 배열 반환
+
 1. 상품 조회
-- 조건 : id 또는 name 중 하나만 입력, ID는 1 이상, 상품명은 공백 없이 정확히 일치하는 이름으로 검색
-- GET, /api/v1/products?id=1 또는 /api/v1/products?name=키보드
+- 조건 : 상품명은 공백 없이 정확히 일치하는 이름으로 검색
+- GET, /api/v1/products?itemName=키보드
 - Request Body: 없음
 - 응답 : 단일 상품 객체
 ```json
-{ "id": 1, "name": "키보드", "price": 30000, "stock": 10 }
+{ "id": 1, "itemName": "키보드", "price": 30000, "quantity": 10 }
 ```
 - 정상 응답 : 200(상품 조회 성공)
-- 실패 응답 : 400(조회 조건 누락·동시 입력·잘못된 값), 404(상품 없음)
+- 실패 응답 : 400(상품명이 빈 문자열), 404(상품 없음)
 
 2. 상품 구매
 - 조건 : 여러 종류의 상품을 복수로 구매 가능, ID로 주문, 수량은 1 이상
@@ -20,8 +35,8 @@
 - Request Body: 객체 배열
 ```json
 [
-  { "productId": 1, "quantity": 2 },
-  { "productId": 3, "quantity": 1 }
+  { "productId": 1, "count": 2 },
+  { "productId": 3, "count": 1 }
 ]
 ```
 - 응답 : 모든 상품 구매에 성공한 경우 구매 상품 목록과 합계
@@ -79,8 +94,8 @@
 - 요청 body :
 ```json
 [
-  { "productId": 1, "quantity": 2 },
-  { "productId": 3, "quantity": 1 }
+  { "itemName": "키보드", "quantity": 2 },
+  { "itemName": "마우스", "quantity": 1 }
 ]
 ```
 - 응답 : 재고 추가에 성공한 상품 목록
@@ -98,9 +113,10 @@
 - DELETE, /api/v1/admin/products
 - 요청 body :
 ```json
-{
-  "productIds": [1, 3]
-}
+[
+  { "itemName": "키보드" },
+  { "itemName": "마우스" }
+]
 ```
 - 응답 : 삭제에 성공한 상품 목록
 ```json

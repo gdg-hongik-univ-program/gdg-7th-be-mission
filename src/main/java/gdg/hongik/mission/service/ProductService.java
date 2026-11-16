@@ -28,41 +28,33 @@ public class ProductService {
 
     private final ProductRepository productRepository;
 
-    //상품 조회
-    public GetProductResponse getProduct(Long id, String name){
+    //전체 상품 조회
+    public List<GetProductResponse> getAllProducts() {
+        return productRepository.findAll().stream()
+                .map(this::toGetProductResponse)
+                .toList();
+    }
 
-        if ((id == null && name == null)
-                || (id != null && name != null)) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "id 또는 name 중 하나만 입력해 주세요."
-            );
-        }
+    //상품명으로 단건 조회
+    public GetProductResponse getProductByName(String name){
+        validateProductName(name);
 
-        Product result;
+        Product result = productRepository.findByName(name)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "상품을 찾을 수 없습니다."
+                ));
 
-        if (id != null) {
-            if (id <= 0) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "상품 ID는 1 이상이어야 합니다.");
-            }
-            result = productRepository.findById(id)
-                    .orElseThrow(() -> new ResponseStatusException(
-                            HttpStatus.NOT_FOUND,
-                            "상품을 찾을 수 없습니다."
-                    ));
-        }
-        else {
-            if (name.isBlank()) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "상품명을 입력해 주세요.");
-            }
-            result = productRepository.findByName(name)
-                    .orElseThrow(() -> new ResponseStatusException(
-                            HttpStatus.NOT_FOUND,
-                            "상품을 찾을 수 없습니다."
-                    ));
-        }
+        return toGetProductResponse(result);
+    }
 
-        return new GetProductResponse(result.getId(), result.getName(), result.getPrice(), result.getStock());
+    private GetProductResponse toGetProductResponse(Product product) {
+        return new GetProductResponse(
+                product.getId(),
+                product.getName(),
+                product.getPrice(),
+                product.getStock()
+        );
     }
 
     //상품 구매
@@ -147,7 +139,7 @@ public class ProductService {
 
         for(AddStockRequest request : requests) {
 
-            Product targetProduct = productRepository.findById(request.productId())
+            Product targetProduct = productRepository.findByName(request.name())
                     .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "상품을 찾을 수 없습니다."));
 
             targetProduct.addStock(request.quantity());
@@ -171,15 +163,16 @@ public class ProductService {
         List<DeleteProductResponse> responses = new ArrayList<>();
 
         for(DeleteProductRequest request : requests){
-            //검증
-            Product targetProduct = productRepository.findById(request.id())
-                    .orElseThrow(()-> new ResponseStatusException(HttpStatus.BAD_REQUEST, "존재하지 않는 상품입니다."));
+            validateProductName(request.name());
+
+            Product targetProduct = productRepository.findByName(request.name())
+                    .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 상품입니다."));
 
             responses.add(new DeleteProductResponse(
                     targetProduct.getId(),targetProduct.getName(),targetProduct.getPrice(),targetProduct.getStock()
             ));
 
-            productRepository.deleteById(request.id());
+            productRepository.delete(targetProduct);
         }
         return responses;
     }
@@ -204,9 +197,16 @@ public class ProductService {
     }
     private void validateAddedQuantity(List<AddStockRequest> requests) {
         for (AddStockRequest request : requests){
+            validateProductName(request.name());
+
             if (request.quantity() <= 0) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수량은 1 이상이어야 합니다.");
             }
+        }
+    }
+    private void validateProductName(String name) {
+        if (name == null || name.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "상품명은 비어 있을 수 없습니다.");
         }
     }
     private void validateOrderedQuantity(Product targetProduct, CreateOrderRequest request) {

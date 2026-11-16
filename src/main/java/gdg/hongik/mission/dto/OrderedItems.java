@@ -1,10 +1,12 @@
 package gdg.hongik.mission.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public record OrderedItems(
         Long productId,
-        String productName,
-        int quantity,
+        @JsonProperty("itemName") String productName,
+        @JsonProperty("count") int quantity,
         int subtotal,
-        int remainingStock
+        @JsonProperty("quantity") int remainingStock
 ) {
 }

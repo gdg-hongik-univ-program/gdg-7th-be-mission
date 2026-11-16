@@ -16,17 +16,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
 
+@CrossOrigin(origins = "*") // 모든 출처(프론트엔드)에서의 API 요청을 허용합니다.
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/admin/products")
@@ -53,7 +48,7 @@ public class ProductAdminController {
 
     @PatchMapping("/stock")
     @Operation(summary = "여러 상품 재고 추가",
-            description = "상품 ID와 추가 수량을 객체 배열로 전달합니다. 수량은 1 이상이며, "
+            description = "상품명과 추가 수량을 객체 배열로 전달합니다. 수량은 1 이상이며, "
                     + "실패한 상품은 건너뛰고 재고 추가에 성공한 상품 목록을 반환합니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "재고 추가 결과 (모두 실패하면 빈 배열)"),
@@ -69,7 +64,7 @@ public class ProductAdminController {
 
     @DeleteMapping
     @Operation(summary = "여러 상품 삭제",
-            description = "요청 본문의 productIds 배열로 여러 상품을 삭제합니다. "
+            description = "요청 본문의 상품명으로 여러 상품을 삭제합니다. "
                     + "없는 상품은 건너뛰고 삭제에 성공한 상품 목록을 반환합니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "삭제 결과 (모두 실패하면 빈 배열)"),

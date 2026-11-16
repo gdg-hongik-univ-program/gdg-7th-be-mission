@@ -1,4 +1,8 @@
 package gdg.hongik.mission.dto;
 
-public record DeleteProductRequest(Long id) {
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public record DeleteProductRequest(
+        @JsonProperty("itemName") String name
+) {
 }

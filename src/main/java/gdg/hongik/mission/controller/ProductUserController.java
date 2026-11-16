@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "*") // 모든 출처(프론트엔드)에서의 API 요청을 허용합니다.
 @RestController
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
@@ -26,26 +27,28 @@ public class ProductUserController {
 
     private final ProductService productService;
 
-    @GetMapping("/products")
-    @Operation(summary = "상품 조회",
-            description = "id 또는 name 중 하나만 입력하여 조회합니다. 상품명은 정확히 일치해야 하며, 상품이 없으면 404를 반환합니다.",
-            parameters = {
-                    @Parameter(name = "id", in = ParameterIn.QUERY,
-                            description = "상품 ID (1 이상, name과 동시 사용 불가)", example = "1"),
-                    @Parameter(name = "name", in = ParameterIn.QUERY,
-                            description = "상품명 (공백 불가, id와 동시 사용 불가)", example = "키보드")
-            })
+    @GetMapping(value = "/products", params = {"!id", "!itemName"})
+    @Operation(summary = "전체 상품 조회",
+            description = "등록된 전체 상품을 조회합니다. 상품이 없으면 빈 배열을 반환합니다.")
+    @ApiResponse(responseCode = "200", description = "전체 상품 조회 성공")
+    public ResponseEntity<List<GetProductResponse>> getAllProducts() {
+        return ResponseEntity.ok(productService.getAllProducts());
+    }
+
+    @GetMapping(value = "/products", params = {"itemName", "!id"})
+    @Operation(summary = "상품명으로 상품 조회",
+            description = "상품명으로 정확히 일치하는 상품을 조회하며, 상품이 없으면 404를 반환합니다.",
+            parameters = @Parameter(name = "itemName", in = ParameterIn.QUERY,
+                    required = true, description = "검색할 상품명", example = "키보드"))
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "상품 조회 성공 (단일 상품 객체)"),
-            @ApiResponse(responseCode = "400", description = "조회 조건 누락, 동시 입력 또는 잘못된 값"),
+            @ApiResponse(responseCode = "400", description = "상품명 누락 또는 빈 문자열"),
             @ApiResponse(responseCode = "404", description = "상품 없음")
     })
-    public ResponseEntity<GetProductResponse> getProduct(
-            @RequestParam(required = false) Long id,
-            @RequestParam(required = false) String name
+    public ResponseEntity<GetProductResponse> getProductByName(
+            @RequestParam("itemName") String name
     ) {
-
-        GetProductResponse response = productService.getProduct(id, name);
+        GetProductResponse response = productService.getProductByName(name);
 
         return ResponseEntity.ok(response);
     }
