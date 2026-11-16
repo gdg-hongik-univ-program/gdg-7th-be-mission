@@ -7,15 +7,9 @@ import gdg.hongik.mission.dto.ProductResponse;
 import gdg.hongik.mission.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -23,13 +17,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/admin/products")
 @Tag(name = "관리자 상품 API", description = "상품 등록, 재고 추가, 삭제")
+@RequiredArgsConstructor
 public class ProductAdminController {
 
     private final ProductService productService;
-
-    public ProductAdminController(ProductService productService) {
-        this.productService = productService;
-    }
 
     @Operation(summary = "상품 등록")
     @PostMapping
@@ -44,9 +35,9 @@ public class ProductAdminController {
         return productService.addStock(request.itemName(), request.quantity());
     }
 
-    @Operation(summary = "상품명으로 삭제하고 남은 상품 조회")
+    @Operation(summary = "상품 ID 목록으로 삭제하고 남은 상품 조회")
     @DeleteMapping
-    public List<ProductResponse> deleteProduct(@RequestBody DeleteProductsRequest request) {
-        return productService.deleteProduct(request.itemName());
+    public List<ProductResponse> deleteProducts(@RequestParam("ids") List<Long> ids) {
+        return productService.deleteProducts(ids);
     }
 }

@@ -124,10 +124,25 @@ public class ProductService {
     }
 
     @Transactional
-    public List<ProductResponse> deleteProduct(String itemName) {
-        Product product = findOneByItemName(itemName);
-        repository.delete(product);
+    public List<ProductResponse> deleteProducts(List<Long> ids) {
+        if (ids == null || ids.isEmpty()) {
+            throw new IllegalArgumentException("삭제할 상품 ID를 입력해주세요.");
+        }
 
+        for (Long id : ids) {
+            if (id == null || id <= 0) {
+                throw new IllegalArgumentException("상품 ID는 1 이상이어야 합니다.");
+            }
+        }
+
+        Set<Long> uniqueIds = new HashSet<>(ids);
+        List<Product> products = repository.findAllById(uniqueIds);
+
+        if (products.size() != uniqueIds.size()) {
+            throw new IllegalArgumentException("삭제할 상품을 찾을 수 없습니다.");
+        }
+
+        repository.deleteAll(products);
         return findAllProducts();
     }
 

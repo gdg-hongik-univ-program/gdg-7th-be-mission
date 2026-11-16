@@ -6,6 +6,7 @@ import gdg.hongik.mission.dto.PurchaseResponse;
 import gdg.hongik.mission.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,13 +23,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/products")
 @Tag(name = "소비자 상품 API", description = "상품 조회와 구매")
+@RequiredArgsConstructor
 public class ProductUserController {
 
     private final ProductService productService;
-
-    public ProductUserController(ProductService productService) {
-        this.productService = productService;
-    }
 
     @Operation(summary = "전체 상품 목록 조회")
     @GetMapping(params = "!itemName")
