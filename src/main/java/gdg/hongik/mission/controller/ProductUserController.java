@@ -6,6 +6,8 @@ import gdg.hongik.mission.dto.PurchaseResponse;
 import gdg.hongik.mission.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -36,14 +38,15 @@ public class ProductUserController {
 
     @Operation(summary = "상품명 단건 검색")
     @GetMapping(params = "itemName")
-    public ProductResponse getProduct(@RequestParam("itemName") String itemName) {
+    public ProductResponse getProduct(@RequestParam("itemName") @NotBlank(message = "상품명을 입력해주세요.") String itemName) {
         return productService.findProductByItemName(itemName);
     }
 
     @Operation(summary = "장바구니 상품 일괄 구매")
     @PostMapping("/purchase")
     @ResponseStatus(HttpStatus.CREATED)
-    public PurchaseResponse purchase(@RequestBody List<PurchaseRequest> items) {
+    public PurchaseResponse purchase(@RequestBody @NotEmpty(message = "구매할 상품을 입력해주세요.")
+            List<@NotNull(message = "구매할 상품을 입력해주세요.") @Valid PurchaseRequest> items) {
         return productService.purchaseProducts(items);
     }
 }
