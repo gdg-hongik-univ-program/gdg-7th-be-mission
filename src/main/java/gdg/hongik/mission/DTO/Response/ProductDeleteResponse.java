@@ -1,4 +1,4 @@
-package gdg.hongik.mission.DTO;
+package gdg.hongik.mission.DTO.Response;
 
 
 
