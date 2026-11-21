@@ -1,9 +1,6 @@
 package gdg.hongik.mission.Entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,14 +12,18 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
+    private String itemName;
     private int price;
-    private int stock;
+    private int quantity;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Category category;
 
-    public Product(String name, int price, int stock) {
-        this.stock = stock;
+    public Product(String itemName, int price, int quantity, Category category) {
+        this.quantity = quantity;
         this.price = price;
-        this.name = name;
+        this.itemName = itemName;
+        this.category = category;
     }
 
     public Product() {

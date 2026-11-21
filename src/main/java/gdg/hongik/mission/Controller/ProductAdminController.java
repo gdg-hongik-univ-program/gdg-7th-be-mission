@@ -1,25 +1,21 @@
 package gdg.hongik.mission.Controller;
 
-import gdg.hongik.mission.DTO.*;
+import gdg.hongik.mission.DTO.Request.ProductAddStock;
+import gdg.hongik.mission.DTO.Request.ProductDelete;
+import gdg.hongik.mission.DTO.Request.ProductRequest;
 import gdg.hongik.mission.Entity.Product;
-import gdg.hongik.mission.Repository.ProductRepository;
 import gdg.hongik.mission.Service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-
+@CrossOrigin(origins = "*")
 @RestController
 @Tag(
         name = "관리자 API",
@@ -27,11 +23,9 @@ import java.util.Map;
 )
 public class ProductAdminController {
 
-    private final ProductRepository productRepository;
     private final ProductService productService;
 
-    public ProductAdminController(ProductRepository productRepository, ProductService productService) {
-        this.productRepository = productRepository;
+    public ProductAdminController( ProductService productService) {
         this.productService = productService;
     }
 
@@ -43,13 +37,13 @@ public class ProductAdminController {
             responseCode = "201",
             description = "상품 등록 성공"
     )
-    @PostMapping("/api/products")
-    public ResponseEntity<Product> createProduct(@RequestBody ProductRequest request) {
+    @PostMapping("/admin/products")
+    public ResponseEntity<Product> createProduct(@Valid @RequestBody ProductRequest request) {
 
-        Product newProduct = productService.createProduct(request);
+        Product product = productService.createProduct(request);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(newProduct);
+                .body(product);
 
     }
 
@@ -61,16 +55,15 @@ public class ProductAdminController {
             responseCode = "200",
             description = "재고 추가 성공"
     )
-    @PostMapping("/api/stock")
-    public ProductAddStockResponse addStock(@RequestBody ProductAddStock item){
+    @PatchMapping("/admin/products/stock")
+    public Product addStock(@RequestBody ProductAddStock item){
 
-        Long productId = item.id();
+        String productName = item.itemName();
         int quantity = item.quantity();;
 
-        Product product = productService.addStock(productId,quantity);
-        ProductAddStockResponse response = new ProductAddStockResponse(product.getName(),product.getStock());
+        Product product = productService.addStock(productName,quantity);
 
-        return response;
+        return product;
     }
 
 
@@ -83,18 +76,13 @@ public class ProductAdminController {
             responseCode = "200",
             description = "상품 삭제 성공"
     )
-    @DeleteMapping("/api/products")
-    public ProductDeleteResponse deleteProducts(@RequestBody List<ProductDelete> items) {
+    @DeleteMapping("/admin/products")
+    public List<Product> deleteProducts(@RequestBody ProductDelete items) {
 
         List<Product> products = productService.deleteProducts(items);
 
-        ProductDeleteResponse response = new ProductDeleteResponse();
-
-        for(Product product : products){
-            RemainingProduct item = new RemainingProduct(product.getName(),product.getStock());
-            response.items().add(item);
-        }
-
-        return response;
+        return products;
     }
+
+
 }
