@@ -1,2 +1,3 @@
-이 파일은 추후 사진을 첨부해야 하는 과제가 있을 시 사용됩니다.  
-WIL을 쓰는 곳이 아닙니다!
+![img.png](product-create.png)
+![img_1.png](product-get.png)
+![img_2.png](product-delete.png)
