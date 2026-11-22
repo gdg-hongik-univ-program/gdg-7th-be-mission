@@ -1,5 +1,7 @@
 package gdg.hongik.mission.entity;
 
+import gdg.hongik.mission.global.exception.ConflictException;
+import gdg.hongik.mission.global.message.ErrorMessage;
 import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
 
@@ -29,6 +31,9 @@ public class Product {
     }
 
     public void deductStock(int quantity) {
+        if (quantity > this.stock) {
+            throw new ConflictException(ErrorMessage.INSUFFICIENT_STOCK);
+        }
         stock -= quantity;
     }
 
