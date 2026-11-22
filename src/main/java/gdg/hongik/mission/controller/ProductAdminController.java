@@ -75,7 +75,7 @@ public class ProductAdminController {
     @DeleteMapping
     @Operation(summary = "상품 삭제",
             description = "요청 본문의 상품명으로 여러 상품을 삭제합니다. "
-                    + "실패하면 전체 롤백합니다. 삭제한 상품 목록을 카테고리와 함께 반환합니다.")
+                    + "실패하면 전체 롤백합니다. 삭제후 남은 상품 목록을 id를 제외하고 반환합니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "삭제 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 요청 (전체 취소)"),

@@ -114,15 +114,15 @@
 - 요청 body :
 ```json
 [
-  { "itemName": "키보드" },
-  { "itemName": "마우스" }
+  { "itemName": "옷" },
+  { "itemName": "컴퓨터" }
 ]
 ```
-- 응답 : 삭제에 성공한 상품 목록
+- 응답 : 삭제후 남은 상품 목록
 ```json
 [
-  { "id": 1, "itemName": "키보드", "category": "전자기기", "price": 30000, "quantity": 10 },
-  { "id": 3, "itemName": "마우스", "category": "전자기기", "price": 20000, "quantity": 5 }
+  { "itemName": "키보드", "category": "전자기기", "price": 30000, "quantity": 10 },
+  { "itemName": "마우스", "category": "전자기기", "price": 20000, "quantity": 5 }
 ]
 ```
 - 정상 응답 : 200(일괄 처리 성공)

@@ -115,15 +115,18 @@ public class ProductService {
             Product targetProduct = productRepository.findByName(request.name())
                     .orElseThrow(()-> new NotFoundException(ErrorMessage.PRODUCT_NOT_FOUND));
 
-            responses.add(new DeleteProductResponse(
-                    targetProduct.getId(),
-                    targetProduct.getName(),
-                    targetProduct.getCategory(),
-                    targetProduct.getPrice(),
-                    targetProduct.getStock()
-            ));
-
             productRepository.delete(targetProduct);
+        }
+
+        List<Product> remainingProducts = productRepository.findAll();
+        for(Product remainingProduct : remainingProducts){
+            responses.add(new DeleteProductResponse(
+                    remainingProduct.getName(),
+                    remainingProduct.getCategory(),
+                    remainingProduct.getPrice(),
+                    remainingProduct.getStock()
+                    )
+            );
         }
         return responses;
     }
