@@ -52,6 +52,7 @@ public class ProductService {
         return new GetProductResponse(
                 product.getId(),
                 product.getName(),
+                product.getCategory(),
                 product.getPrice(),
                 product.getStock()
         );
@@ -113,12 +114,13 @@ public class ProductService {
 
         for (CreateProductRequest request : requests){
 
-            Product product = new Product(request.name(), request.price(), request.stock());
+            Product product = new Product(request.name(), request.category(), request.price(), request.stock());
             Product savedProduct = productRepository.save(product);
 
             responses.add(new CreateProductResponse(
                     savedProduct.getId(),
                     savedProduct.getName(),
+                    savedProduct.getCategory(),
                     savedProduct.getPrice(),
                     savedProduct.getStock()));
         }
@@ -169,7 +171,11 @@ public class ProductService {
                     .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 상품입니다."));
 
             responses.add(new DeleteProductResponse(
-                    targetProduct.getId(),targetProduct.getName(),targetProduct.getPrice(),targetProduct.getStock()
+                    targetProduct.getId(),
+                    targetProduct.getName(),
+                    targetProduct.getCategory(),
+                    targetProduct.getPrice(),
+                    targetProduct.getStock()
             ));
 
             productRepository.delete(targetProduct);
@@ -182,6 +188,12 @@ public class ProductService {
             {
                 if (request.name() == null || request.name().isBlank()) {
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "상품명은 비어 있을 수 없습니다.");
+                }
+                if (request.category() == null) {
+                    throw new ResponseStatusException(
+                            HttpStatus.BAD_REQUEST,
+                            "카테고리는 필수입니다."
+                    );
                 }
                 if (request.price() < 0 || request.stock() < 0) {
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "가격과 재고는 0 이상이어야 합니다.");

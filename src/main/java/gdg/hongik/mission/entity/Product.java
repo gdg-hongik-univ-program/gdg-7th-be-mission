@@ -11,15 +11,15 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    @Enumerated(EnumType.STRING) // 반드시 STRING (생략하면 ORDINAL이 되어 0, 1, 2 같은 순번이 저장됩니다)
+    @Column(nullable = false)
+    private Category category;
     private int price;
     private int stock;
 
-    @Enumerated(EnumType.STRING) // 반드시 STRING! (생략하면 ORDINAL이 되어 0, 1, 2 같은 순번이 저장됩니다)
-    @Column(nullable = false)
-    private Category category;
-
-    public Product(String name, int price, int stock) {
+    public Product(String name, Category category, int price, int stock) {
         this.name = name;
+        this.category = category;
         this.price = price;
         this.stock = stock;
     }
@@ -39,6 +39,8 @@ public class Product {
     public String getName() {
         return name;
     }
+
+    public Category getCategory() {return category; }
 
     public int getPrice() {
         return price;
