@@ -1,2 +1,1 @@
-이 파일은 추후 사진을 첨부해야 하는 과제가 있을 시 사용됩니다.  
-WIL을 쓰는 곳이 아닙니다!
+![alt text](<Admin_Delete(상품 삭제).png>) ![alt text](<Admin_Patch(재고 추가).png>) ![alt text](<Admin_Post(상품 등록).png>) ![alt text](<User_GET(상품 조회).png>) ![alt text](<User_Post(상품 구매).png>)
